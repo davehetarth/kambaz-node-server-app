@@ -6,6 +6,9 @@ export default function UserRoutes(app, db) {
   console.log("--- UserRoutes(app, db) function is executing ---");
   const dao = UsersDao(db);
   console.log("--- User DAO created successfully ---");
+  const testRoute = (req, res) => {
+    res.send("User routes are 100% working!");
+  };
   const createUser = (req, res) => {
     const user = dao.createUser(req.body);
     res.json(user);
@@ -76,6 +79,7 @@ export default function UserRoutes(app, db) {
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
   app.post("/api/users/profile", profile);
+  app.get("/api/users/test", testRoute); // <-- ADD THIS LINE
 
   console.log("--- All User routes registered ---"); // <-- ADD THIS LINE
 }
