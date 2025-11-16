@@ -3,62 +3,48 @@ import UsersDao from "./dao.js";
 export default function UserRoutes(app, db) {
   const dao = UsersDao(db);
 
-  // 1. Make functions async
-  const createUser = async (req, res) => {
-    const user = await dao.createUser(req.body);
+  const createUser = (req, res) => {
+    const user = dao.createUser(req.body);
     res.json(user);
   };
-
-  const deleteUser = async (req, res) => {
-    const status = await dao.deleteUser(req.params.userId);
+  const deleteUser = (req, res) => {
+    const status = dao.deleteUser(req.params.userId);
     res.json(status);
   };
-
-  const findAllUsers = async (req, res) => {
-    const users = await dao.findAllUsers();
+  const findAllUsers = (req, res) => {
+    const users = dao.findAllUsers();
     res.json(users);
   };
-
-  const findUserById = async (req, res) => {
-    const user = await dao.findUserById(req.params.userId);
+  const findUserById = (req, res) => {
+    const user = dao.findUserById(req.params.userId);
     res.json(user);
   };
-
-  const updateUser = async (req, res) => {
+  const updateUser = (req, res) => {
     const userId = req.params.userId;
     const userUpdates = req.body;
-
-    // 2. Wait for the update to finish
-    await dao.updateUser(userId, userUpdates);
-
-    // 3. Wait for the fetch to finish
-    const currentUser = await dao.findUserById(userId);
-
+    dao.updateUser(userId, userUpdates);
+    const currentUser = dao.findUserById(userId);
     req.session["currentUser"] = currentUser;
     res.json(currentUser);
   };
-
-  const signup = async (req, res) => {
-    // 4. Wait for the lookup
-    const user = await dao.findUserByUsername(req.body.username);
+  const signup = (req, res) => {
+    const user = dao.findUserByUsername(req.body.username);
     if (user) {
       res.status(400).json({ message: "Username already in use" });
       return;
     }
-    // 5. Wait for the creation
-    const currentUser = await dao.createUser(req.body);
+    const currentUser = dao.createUser(req.body);
     req.session["currentUser"] = currentUser;
     res.json(currentUser);
   };
 
-  const signin = async (req, res) => {
+  // This is the one causing the 204/404
+  const signin = (req, res) => {
     const { username, password } = req.body;
-    // 6. CRITICAL: Wait for the DB to find the user
-    const currentUser = await dao.findUserByCredentials(username, password);
-
+    const currentUser = dao.findUserByCredentials(username, password);
     if (currentUser) {
       req.session["currentUser"] = currentUser;
-      res.json(currentUser);
+      res.json(currentUser); // This will send a 200 OK + user data
     } else {
       res.status(401).json({ message: "Unable to login. Try again later." });
     }
@@ -68,7 +54,6 @@ export default function UserRoutes(app, db) {
     req.session.destroy();
     res.sendStatus(200);
   };
-
   const profile = (req, res) => {
     const currentUser = req.session["currentUser"];
     if (!currentUser) {
