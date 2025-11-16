@@ -54,10 +54,10 @@ AssignmentRoutes(app, db);
 EnrollmentRoutes(app, db);
 ModulesRoutes(app, db);
 Hello(app);
-// Lab5(app);
-// PathParameters(app);
-// QueryParameters(app);
-// WorkingWithObjects(app);
-// WorkingWithArrays(app);
+Lab5(app);
+PathParameters(app);
+QueryParameters(app);
+WorkingWithObjects(app);
+WorkingWithArrays(app);
 
 app.listen(process.env.PORT || 4000);
