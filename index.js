@@ -15,6 +15,8 @@ import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 
+console.log("Is db object loaded?", !!db); // <-- ADD THIS LINE
+
 const app = express();
 
 // 1. CORS: Allow your Vercel app
