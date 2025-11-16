@@ -19,12 +19,14 @@ console.log("Is db object loaded?", !!db); // <-- ADD THIS LINE
 
 const app = express();
 
+app.set("trust proxy", 1);
 // 1. CORS: Allow your Vercel app
 app.use(
   cors({
     credentials: true,
-    // Ensure CLIENT_URL is set in Render env vars, or fallback to localhost
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    // FIX: Hardcoded Vercel URL to bypass environment variable issues
+    origin:
+      "https://kambaz-next-js-fa25-git-assign-5-hetarth-daves-projects.vercel.app",
   })
 );
 
