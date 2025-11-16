@@ -1,5 +1,7 @@
 import UsersDao from "./dao.js";
 
+console.log("--- UserRoutes.js file is loading ---");
+
 export default function UserRoutes(app, db) {
   const dao = UsersDao(db);
 
