@@ -76,4 +76,6 @@ export default function UserRoutes(app, db) {
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
   app.post("/api/users/profile", profile);
+
+  console.log("--- All User routes registered ---"); // <-- ADD THIS LINE
 }
