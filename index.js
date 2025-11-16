@@ -26,7 +26,7 @@ app.use(
     credentials: true,
     // FIX: Hardcoded Vercel URL to bypass environment variable issues
     origin:
-      "https://kambaz-next-js-fa25-git-assign-5-hetarth-daves-projects.vercel.app",
+      "https://kambaz-next-js-fa25-di1rnxi4y-hetarth-daves-projects.vercel.app",
   })
 );
 
