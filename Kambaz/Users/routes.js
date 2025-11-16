@@ -3,6 +3,7 @@ import UsersDao from "./dao.js";
 console.log("--- UserRoutes.js file is loading ---");
 
 export default function UserRoutes(app, db) {
+  console.log("--- UserRoutes(app, db) function is executing ---");
   const dao = UsersDao(db);
 
   const createUser = (req, res) => {
@@ -42,6 +43,7 @@ export default function UserRoutes(app, db) {
 
   // This is the one causing the 204/404
   const signin = (req, res) => {
+    console.log("--- POST /api/users/signin route hit ---");
     const { username, password } = req.body;
     const currentUser = dao.findUserByCredentials(username, password);
     if (currentUser) {
