@@ -24,9 +24,8 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     credentials: true,
-    // FIX: Hardcoded Vercel URL to bypass environment variable issues
-    origin:
-      "https://kambaz-next-js-fa25-di1rnxi4y-hetarth-daves-projects.vercel.app",
+    // Ensure CLIENT_URL is set in Render env vars, or fallback to localhost
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
   })
 );
 
