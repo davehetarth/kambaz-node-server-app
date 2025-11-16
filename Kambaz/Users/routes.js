@@ -5,7 +5,7 @@ console.log("--- UserRoutes.js file is loading ---");
 export default function UserRoutes(app, db) {
   console.log("--- UserRoutes(app, db) function is executing ---");
   const dao = UsersDao(db);
-
+  console.log("--- User DAO created successfully ---");
   const createUser = (req, res) => {
     const user = dao.createUser(req.body);
     res.json(user);
