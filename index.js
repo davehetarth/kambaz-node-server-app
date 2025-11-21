@@ -39,7 +39,7 @@ app.set("trust proxy", 1); // CRITICAL for Render to recognize HTTPS
 
 // 2. Final Robust Session Configuration (Fixes 401)
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "kambaz",
+  secret: process.env.SESSION_SECRET || "super secret session phrase",
   resave: false,
   saveUninitialized: false,
 
