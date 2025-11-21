@@ -2,8 +2,8 @@ import UsersDao from "./dao.js";
 
 console.log("--- UserRoutes.js file is loading ---");
 
-export default function UserRoutes(app, db) {
-  const dao = UsersDao(db);
+export default function UserRoutes(app) {
+  const dao = UsersDao();
 
   const createUser = async (req, res) => {
     const user = await dao.createUser(req.body);
