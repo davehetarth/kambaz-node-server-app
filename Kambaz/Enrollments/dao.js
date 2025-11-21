@@ -1,49 +1,67 @@
-import { v4 as uuidv4 } from "uuid";
+import model from "./model.js";
 
-export default function EnrollmentsDao(db) {
-  let { enrollments } = db;
+// The DAO now relies entirely on the imported Mongoose model.
+export default function EnrollmentsDao() {
+  // Find all courses a user is enrolled in. Used by CourseRoutes to filter Dashboard.
+  async function findCoursesForUser(userId) {
+    // Find enrollments for the user and populate the 'course' field with full course details.
+    const enrollments = await model
+      .find({ user: userId })
+      .populate("course")
+      .lean(); // .lean() ensures safe JSON serialization
 
-  /**
-   * Enrolls a user in a course.
-   * @param {string} userId - The ID of the user.
-   * @param {string} courseId - The ID of the course.
-   */
-  function enrollUserInCourse(userId, courseId) {
-    // Check if enrollment already exists
-    const existingEnrollment = enrollments.find(
-      (e) => e.user === userId && e.course === courseId
-    );
-    if (existingEnrollment) {
-      return; // Already enrolled
-    }
-    const newEnrollment = { _id: uuidv4(), user: userId, course: courseId };
-    enrollments.push(newEnrollment);
-    return newEnrollment;
+    // Return only the course objects, not the enrollment wrapper documents
+    return enrollments.map((enrollment) => enrollment.course);
   }
 
-  /**
-   * Unenrolls a user from a course.
-   * @param {string} userId - The ID of the user.
-   * @param {string} courseId - The ID of the course.
-   */
+  // Find all users enrolled in a specific course. Used by PeopleTable.
+  async function findUsersForCourse(courseId) {
+    const enrollments = await model
+      .find({ course: courseId })
+      .populate("user")
+      .lean();
+
+    // Return only the user objects
+    return enrollments.map((enrollment) => enrollment.user);
+  }
+
+  // Enrolls a user in a course. Uses findOneAndUpdate with upsert for atomic operation.
+  async function enrollUserInCourse(userId, courseId) {
+    const newEnrollment = {
+      user: userId,
+      course: courseId,
+      // Creates a unique, deterministic ID for the document
+      _id: `${userId}-${courseId}`,
+    };
+    const status = await model.findOneAndUpdate(
+      { _id: newEnrollment._id },
+      newEnrollment,
+      { upsert: true, new: true } // Creates document if it doesn't exist
+    );
+    return status;
+  }
+
+  // Unenrolls a user from a course.
   function unenrollUserFromCourse(userId, courseId) {
-    db.enrollments = enrollments.filter(
-      (e) => !(e.user === userId && e.course === courseId)
-    );
+    return model.deleteOne({ user: userId, course: courseId });
   }
 
-  /**
-   * Finds all enrollments for a specific user.
-   * @param {string} userId - The ID of the user.
-   * @returns {Array} - An array of enrollment objects.
-   */
-  function findEnrollmentsForUser(userId) {
-    return enrollments.filter((e) => e.user === userId);
+  // Deletes all enrollments for a course (used when deleting a course).
+  function unenrollAllUsersFromCourse(courseId) {
+    return model.deleteMany({ course: courseId });
+  }
+
+  // Implements the original provided function (renamed for clarity)
+  function findEnrollmentsByUserId(userId) {
+    return model.find({ user: userId }).lean();
   }
 
   return {
+    findCoursesForUser,
+    findUsersForCourse,
     enrollUserInCourse,
     unenrollUserFromCourse,
-    findEnrollmentsForUser,
+    unenrollAllUsersFromCourse,
+    findEnrollmentsByUserId,
   };
 }

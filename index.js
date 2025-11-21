@@ -21,37 +21,45 @@ const CONNECTION_STRING =
 mongoose.connect(CONNECTION_STRING);
 const app = express();
 
-app.set("trust proxy", 1);
-// 1. CORS: Allow your Vercel app
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const isDevelopment = process.env.NODE_ENV === "development";
+
+// 1. CORS Configuration (Fixes 405/OPTIONS and ensures cookie passing)
 app.use(
   cors({
     credentials: true,
-    // Ensure CLIENT_URL is set in Render env vars, or fallback to localhost
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: CLIENT_URL,
+    // FIX: Explicitly allow all methods including OPTIONS for pre-flight checks
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization",
   })
 );
 
+app.set("trust proxy", 1); // CRITICAL for Render to recognize HTTPS
+
+// 2. Final Robust Session Configuration (Fixes 401)
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
-};
 
-if (process.env.NODE_ENV !== "development") {
-  sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    // 2. REMOVED the 'domain' property to avoid configuration errors
-  };
-}
+  // Use proxy: true for deployment, false for local
+  proxy: !isDevelopment,
+  cookie: {
+    // secure: true for deployment (HTTPS), false for local (HTTP)
+    secure: !isDevelopment,
+    // sameSite: 'none' for cross-origin deployment, 'lax' for local
+    sameSite: !isDevelopment ? "none" : "lax",
+  },
+};
 app.use(session(sessionOptions));
 
 app.use(express.json());
 
 // 3. Register all routes
-UserRoutes(app, db);
-CourseRoutes(app, db);
+// Assuming UserRoutes and CourseRoutes are initialized without the legacy 'db'
+UserRoutes(app);
+CourseRoutes(app);
 AssignmentRoutes(app, db);
 EnrollmentRoutes(app, db);
 ModulesRoutes(app, db);
