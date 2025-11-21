@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 import "dotenv/config";
 import session from "express-session";
 import cors from "cors";
-
-// Import all routes
 import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
@@ -21,45 +19,39 @@ import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
 mongoose.connect(CONNECTION_STRING);
-
 const app = express();
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
-const isDevelopment = process.env.NODE_ENV === "development";
-
-// --- CORS Configuration (Fixes 405/OPTIONS) ---
-// We explicitly allow methods and headers to satisfy pre-flight checks.
+app.set("trust proxy", 1);
+// 1. CORS: Allow your Vercel app
 app.use(
   cors({
     credentials: true,
-    origin: CLIENT_URL,
-    // FIX: Explicitly allow OPTIONS, POST, etc., to resolve 405 error
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    allowedHeaders: "Content-Type, Authorization",
+    // Ensure CLIENT_URL is set in Render env vars, or fallback to localhost
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
   })
 );
 
-app.set("trust proxy", 1);
-
-// --- Session Configuration (Fixes 401) ---
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
-  proxy: !isDevelopment,
-  cookie: {
-    secure: !isDevelopment,
-    sameSite: !isDevelopment ? "none" : "lax",
-  },
 };
+
+if (process.env.NODE_ENV !== "development") {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie = {
+    sameSite: "none",
+    secure: true,
+    // 2. REMOVED the 'domain' property to avoid configuration errors
+  };
+}
 app.use(session(sessionOptions));
 
 app.use(express.json());
 
 // 3. Register all routes
-// Note: Ensure UserRoutes and CourseRoutes are correctly imported and initialized
-UserRoutes(app);
-CourseRoutes(app);
+UserRoutes(app, db);
+CourseRoutes(app, db);
 AssignmentRoutes(app, db);
 EnrollmentRoutes(app, db);
 ModulesRoutes(app, db);
