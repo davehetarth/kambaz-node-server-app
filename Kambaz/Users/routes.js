@@ -1,6 +1,6 @@
 import UsersDao from "./dao.js";
 
-console.log("--- UserRoutes.js file is loading ---");
+// console.log("--- UserRoutes.js file is loading ---");
 
 export default function UserRoutes(app) {
   const dao = UsersDao();
@@ -93,5 +93,5 @@ export default function UserRoutes(app) {
   app.post("/api/users/signout", signout);
   app.post("/api/users/profile", profile);
 
-  console.log("--- All User routes registered ---"); // <-- ADD THIS LINE
+  // console.log("--- All User routes registered ---"); // <-- ADD THIS LINE
 }

@@ -7,6 +7,11 @@ const courseSchema = new mongoose.Schema(
     number: String,
     credits: Number,
     description: String,
+    location: String, // <--- CRITICAL: This allows the image path to pass through
+    startDate: String,
+    endDate: String,
+    department: String,
+    image: String,
     modules: [moduleSchema],
   },
   { collection: "courses" }

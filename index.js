@@ -15,7 +15,8 @@ import WorkingWithArrays from "./Lab5/WorkingWithArrays.js";
 import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
-
+console.log("IF YOU SEE THIS, I AM THE RIGHT FILE!");
+// import express ...
 // const CONNECTION_STRING =
 //   process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING;
@@ -23,7 +24,10 @@ mongoose.connect(CONNECTION_STRING);
 const app = express();
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
-const isDevelopment = process.env.NODE_ENV === "development";
+// Check both possibilities
+const isDevelopment =
+  process.env.NODE_ENV === "development" ||
+  process.env.SERVER_ENV === "development";
 
 // 1. CORS Configuration (Fixes 405/OPTIONS and ensures cookie passing)
 app.use(
@@ -59,10 +63,11 @@ app.use(express.json());
 
 // 3. Register all routes
 // Assuming UserRoutes and CourseRoutes are initialized without the legacy 'db'
+EnrollmentRoutes(app, db);
 UserRoutes(app);
 CourseRoutes(app);
 AssignmentRoutes(app, db);
-EnrollmentRoutes(app, db);
+
 ModulesRoutes(app, db);
 Hello(app);
 Lab5(app);
