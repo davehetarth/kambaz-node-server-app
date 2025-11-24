@@ -91,6 +91,12 @@ export default function CourseRoutes(app) {
     res.json(status);
   };
 
+  const findUsersForCourse = async (req, res) => {
+    const { cid } = req.params;
+    const users = await enrollmentsDao.findUsersForCourse(cid);
+    res.json(users);
+  };
+
   // --- REGISTER ROUTES ---
 
   // 1. Standard Course Routes
@@ -108,4 +114,5 @@ export default function CourseRoutes(app) {
   // This matches what your client.ts is actually sending!
   app.post("/api/courses/:courseId/enroll", enrollUserInCourse);
   app.delete("/api/courses/:courseId/unenroll", unenrollUserFromCourse);
+  app.get("/api/courses/:cid/users", findUsersForCourse);
 }
