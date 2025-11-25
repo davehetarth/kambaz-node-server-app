@@ -1,42 +1,31 @@
-import { v4 as uuidv4 } from "uuid";
+import model from "./model.js";
 
-export default function AssignmentsDao(db) {
-  let { assignments } = db;
+// NOTE: We removed the "export default function AssignmentsDao() {...}" wrapper.
+// We are now exporting each function directly using "export const".
 
-  const findAssignmentsForCourse = (courseId) =>
-    assignments.filter((a) => a.course === courseId);
+export const findAssignmentsForCourse = (courseId) => {
+  console.log("DAO: Inside findAssignmentsForCourse");
+  console.log(`DAO: Querying model for course: ${courseId}`);
 
-  const createAssignment = (courseId, assignment) => {
-    const newAssignment = {
-      ...assignment,
-      course: courseId,
-      _id: uuidv4(),
-    };
-    assignments.push(newAssignment);
-    return newAssignment;
-  };
+  // FIX #1: Added the critical 'return' keyword here!
+  return model.find({ course: courseId });
+};
 
-  const deleteAssignment = (assignmentId) => {
-    assignments = assignments.filter((a) => a._id !== assignmentId);
-  };
+export const createAssignment = (courseId, assignment) => {
+  // FIX #1: Added 'return' (though arrow functions without braces do it implicitly, being explicit is safer)
+  return model.create({ ...assignment, course: courseId });
+};
 
-  const updateAssignment = (assignmentId, assignmentUpdates) => {
-    const assignmentIndex = assignments.findIndex(
-      (a) => a._id === assignmentId
-    );
-    if (assignmentIndex > -1) {
-      assignments[assignmentIndex] = {
-        ...assignments[assignmentIndex],
-        ...assignmentUpdates,
-      };
-      return assignments[assignmentIndex];
-    }
-    return null;
-  };
-  return {
-    findAssignmentsForCourse,
-    createAssignment,
-    deleteAssignment,
-    updateAssignment,
-  };
-}
+export const deleteAssignment = (assignmentId) => {
+  // FIX #1: Added 'return'
+  return model.deleteOne({ _id: assignmentId });
+};
+
+export const updateAssignment = (assignmentId, assignmentUpdates) => {
+  // FIX #1: Added 'return'
+  return model.findByIdAndUpdate(
+    assignmentId,
+    { $set: assignmentUpdates },
+    { new: true }
+  );
+};

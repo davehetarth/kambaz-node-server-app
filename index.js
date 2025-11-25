@@ -66,7 +66,7 @@ app.use(express.json());
 EnrollmentRoutes(app, db);
 UserRoutes(app);
 CourseRoutes(app);
-AssignmentRoutes(app, db);
+AssignmentRoutes(app);
 
 ModulesRoutes(app, db);
 Hello(app);

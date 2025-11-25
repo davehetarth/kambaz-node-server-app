@@ -1,26 +1,25 @@
-import ModulesDao from "./dao.js";
+import * as modulesDao from "./dao.js";
 
-export default function ModulesRoutes(app, db) {
-  const dao = ModulesDao(db);
+export default function ModulesRoutes(app) {
+  // No 'db' needed anymore
 
   const findModulesForCourse = async (req, res) => {
     const { courseId } = req.params;
+    // FIX: Use the correctly imported modulesDao object
     const modules = await modulesDao.findModulesForCourse(courseId);
     res.json(modules);
   };
 
   const createModuleForCourse = async (req, res) => {
     const { courseId } = req.params;
-    const module = {
-      ...req.body,
-      // course: courseId,
-    };
-    const newModule = await dao.createModule(courseId, module);
+    // FIX: Use modulesDao
+    const newModule = await modulesDao.createModule(courseId, req.body);
     res.json(newModule);
   };
 
   const deleteModule = async (req, res) => {
     const { courseId, moduleId } = req.params;
+    // FIX: Use modulesDao
     const status = await modulesDao.deleteModule(courseId, moduleId);
     res.json(status);
   };
@@ -28,6 +27,7 @@ export default function ModulesRoutes(app, db) {
   const updateModule = async (req, res) => {
     const { courseId, moduleId } = req.params;
     const moduleUpdates = req.body;
+    // FIX: Use modulesDao
     const status = await modulesDao.updateModule(
       courseId,
       moduleId,
@@ -36,6 +36,8 @@ export default function ModulesRoutes(app, db) {
     res.json(status);
   };
 
+  // Using 'cid' and 'mid' to match your other routes is better practice,
+  // but 'courseId' and 'moduleId' work as long as they match the destructuring above.
   app.put("/api/courses/:courseId/modules/:moduleId", updateModule);
   app.delete("/api/courses/:courseId/modules/:moduleId", deleteModule);
   app.post("/api/courses/:courseId/modules", createModuleForCourse);
