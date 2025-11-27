@@ -15,6 +15,8 @@ import WorkingWithArrays from "./Lab5/WorkingWithArrays.js";
 import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
+import QuizRoutes from "./Kambaz/Quizzes/routes.js";
+import QuizAttemptRoutes from "./Kambaz/QuizAttempts/routes.js";
 console.log("IF YOU SEE THIS, I AM THE RIGHT FILE!");
 // import express ...
 // const CONNECTION_STRING =
@@ -67,7 +69,8 @@ EnrollmentRoutes(app, db);
 UserRoutes(app);
 CourseRoutes(app);
 AssignmentRoutes(app);
-
+QuizRoutes(app);
+QuizAttemptRoutes(app);
 ModulesRoutes(app, db);
 Hello(app);
 Lab5(app);
