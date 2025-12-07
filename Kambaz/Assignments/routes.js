@@ -1,9 +1,6 @@
-// Import the DAO functions directly
 import * as dao from "./dao.js";
 
 export default function AssignmentRoutes(app) {
-  // Note: All handler functions are now 'async'
-
   const findAssignments = async (req, res) => {
     console.log("--> RECEIVED REQUEST: findAssignments (GET)"); // LOG 1
     try {
@@ -23,7 +20,7 @@ export default function AssignmentRoutes(app) {
   const createAssignment = async (req, res) => {
     try {
       const { cid } = req.params;
-      // await the creation
+
       const newAssignment = await dao.createAssignment(cid, req.body);
       res.json(newAssignment);
     } catch (err) {

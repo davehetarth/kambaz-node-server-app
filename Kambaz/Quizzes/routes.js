@@ -1,7 +1,6 @@
 import * as dao from "./dao.js";
 
 export default function QuizRoutes(app) {
-  // GET all quizzes for a course
   const findQuizzesForCourse = async (req, res) => {
     try {
       const { cid } = req.params;
@@ -12,7 +11,6 @@ export default function QuizRoutes(app) {
     }
   };
 
-  // GET a specific quiz details
   const findQuizById = async (req, res) => {
     try {
       const { qid } = req.params;
@@ -27,7 +25,6 @@ export default function QuizRoutes(app) {
     }
   };
 
-  // POST - Create a new quiz for a course
   const createQuiz = async (req, res) => {
     try {
       const { cid } = req.params;
@@ -38,7 +35,6 @@ export default function QuizRoutes(app) {
     }
   };
 
-  // DELETE an existing quiz
   const deleteQuiz = async (req, res) => {
     try {
       const { qid } = req.params;
@@ -49,7 +45,6 @@ export default function QuizRoutes(app) {
     }
   };
 
-  // PUT - Update an existing quiz
   const updateQuiz = async (req, res) => {
     try {
       const { qid } = req.params;
@@ -64,7 +59,6 @@ export default function QuizRoutes(app) {
     }
   };
 
-  // --- Route Declarations ---
   app.get("/api/courses/:cid/quizzes", findQuizzesForCourse);
   app.get("/api/quizzes/:qid", findQuizById);
   app.post("/api/courses/:cid/quizzes", createQuiz);
